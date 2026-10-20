@@ -1,0 +1,301 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ctrl + Z — The Learning Lab</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  --paper: #f8f5ed;
+  --ink: #24251f;
+  --blue: #354fe5;
+  --orange: #fa7652;
+  --green: #d8f36a;
+  --muted: #77776d;
+  --line: #dcd8cd;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: 'Space Grotesk', sans-serif; line-height: 1.6;
+}
+button, a { font: inherit; }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; }
+.topline { height: 7px; background: var(--blue); }
+nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 19px 7%; border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; background: var(--paper); z-index: 5;
+}
+.logo { font-size: 1.3rem; font-weight: 700; letter-spacing: -1px; }
+.logo span { color: var(--blue); }
+.navlinks { display: flex; gap: 27px; align-items: center; font-size: .9rem; }
+.navlinks a:hover { color: var(--blue); }
+.navlinks .navbutton { background: var(--blue); color: white; padding: 10px 16px; }
+.menu { display: none; border: 0; background: none; font-size: 1.5rem; }
+.wrap { max-width: 1120px; margin: auto; padding: 0 7%; }
+.hero { padding-top: 72px; padding-bottom: 70px; }
+.kicker { font: .75rem 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 1px; }
+.kicker::before { content: '● '; color: var(--orange); }
+.hero h1 {
+  font-size: clamp(3.5rem, 9vw, 7rem); line-height: .96;
+  letter-spacing: -7px; margin: 27px 0; font-weight: 700;
+}
+.hero h1 .blue { color: var(--blue); }
+.hero h1 .strike { position: relative; display: inline-block; }
+.hero h1 .strike::after {
+  content: ''; position: absolute; height: 7px; background: var(--orange);
+  left: -3px; right: -6px; top: 52%; transform: rotate(-4deg);
+}
+.hero-bottom { display: flex; justify-content: space-between; align-items: end; gap: 30px; }
+.hero-bottom p { max-width: 440px; color: var(--muted); font-size: 1.06rem; }
+.button {
+  display: inline-block; background: var(--blue); color: white;
+  border: 1px solid var(--blue); padding: 13px 19px; font-weight: 600;
+  transition: .2s;
+}
+.button:hover { background: var(--ink); border-color: var(--ink); }
+.tape {
+  display: inline-block; background: var(--green); padding: 5px 12px;
+  font: .76rem 'DM Mono', monospace; transform: rotate(-2deg);
+}
+.manifesto {
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  padding: 18px 0; display: flex; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; font: .72rem 'DM Mono', monospace;
+}
+section.content { padding-top: 75px; padding-bottom: 75px; }
+.sectionhead { display: flex; justify-content: space-between; align-items: end; gap: 25px; margin-bottom: 30px; }
+.sectionhead h2 { font-size: clamp(2rem, 4vw, 3.2rem); letter-spacing: -2px; line-height: 1.08; }
+.sectionhead p { color: var(--muted); max-width: 380px; }
+.label { font: .73rem 'DM Mono', monospace; color: var(--blue); margin-bottom: 13px; }
+.challenge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.card { border: 1px solid var(--line); padding: 25px; background: #fffdf8; }
+.card-top { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 30px; }
+.pill { font: .68rem 'DM Mono', monospace; border: 1px solid var(--line); padding: 4px 8px; height: fit-content; }
+.card h3 { font-size: 1.55rem; margin-bottom: 8px; letter-spacing: -.7px; }
+.card p { color: var(--muted); font-size: .92rem; margin-bottom: 18px; }
+.textbutton { border: 0; background: none; color: var(--blue); font-weight: 700; padding: 4px 0; }
+.textbutton:hover { text-decoration: underline; }
+.bugcard { background: var(--blue); color: white; border-color: var(--blue); }
+.bugcard .label, .bugcard .textbutton { color: var(--green); }
+.bugcard p { color: #e0e4ff; }
+.bugcard .pill { border-color: #8290f2; }
+.filters { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 22px; }
+.filter { border: 1px solid var(--line); background: transparent; padding: 8px 14px; font-size: .82rem; }
+.filter.active, .filter:hover { background: var(--ink); color: white; border-color: var(--ink); }
+.diary { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.entry { display: flex; gap: 15px; padding: 19px; border: 1px solid var(--line); background: #fffdf8; }
+.entrynum { color: var(--orange); font: .78rem 'DM Mono', monospace; }
+.entry h3 { font-size: 1rem; }
+.entry p { color: var(--muted); font-size: .86rem; }
+.entry[hidden] { display: none; }
+.quiz { background: var(--green); padding: 28px; margin-top: 24px; }
+.quiz h3 { font-size: 1.5rem; margin: 12px 0; }
+.code {
+  background: var(--ink); color: #f8f5ed; padding: 20px;
+  font: .93rem/1.9 'DM Mono', monospace; overflow-x: auto; margin: 17px 0;
+}
+.quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.answer {
+  border: 1px solid #a5b34b; background: #f9fbe9;
+  padding: 12px; text-align: left;
+}
+.answer:hover { background: white; border-color: var(--blue); }
+.feedback { font-weight: 600; margin-top: 14px; min-height: 26px; }
+.reset { margin-top: 10px; border: 0; background: none; text-decoration: underline; }
+.wins { background: #efebe1; }
+.wins-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+.win { padding: 20px; border: 1px dashed #bbb6a8; }
+.win .symbol { font-size: 1.6rem; }
+.win h3 { margin: 8px 0 4px; }
+.win p { color: var(--muted); font-size: .86rem; }
+footer { padding: 25px 7%; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 18px; font: .74rem 'DM Mono', monospace; color: var(--muted); }
+@media(max-width:700px) {
+  nav { padding: 15px 6%; }
+  .menu { display: block; }
+  .navlinks { display: none; position: absolute; top: 62px; left: 0; right: 0; background: var(--paper); padding: 20px 7%; flex-direction: column; align-items: stretch; border-bottom: 1px solid var(--line); }
+  .navlinks.open { display: flex; }
+  .hero { padding-top: 50px; padding-bottom: 45px; }
+  .hero h1 { letter-spacing: -3px; }
+  .hero-bottom, .sectionhead { align-items: start; flex-direction: column; }
+  .hero-bottom .button { margin-top: 5px; }
+  .challenge-grid, .diary, .wins-grid { grid-template-columns: 1fr; }
+  section.content { padding-top: 52px; padding-bottom: 52px; }
+  .quiz-options { grid-template-columns: 1fr; }
+  footer { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div class="topline"></div>
+<nav>
+  <a class="logo" href="#home">ctrl <span>+</span> z<span>.</span></a>
+  <button class="menu" id="menu" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  <div class="navlinks" id="navlinks">
+    <a href="#challenges">Explore</a>
+    <a href="#diary">Bug diary</a>
+    <a href="#debug">Debug this!</a>
+    <a class="navbutton" href="#wins">Tiny wins ↗</a>
+  </div>
+</nav>
+
+<main id="home">
+  <header class="wrap hero">
+    <span class="tape">FIELD NOTES FOR BEGINNER BUILDERS</span>
+    <h1>Made a bug?<br><span class="strike">Good.</span><br><span class="blue">You're learning.</span></h1>
+    <div class="hero-bottom">
+      <p>A tiny corner of the internet for learning tech out loud. Debug your mistakes, collect little wins, and remember: nobody writes perfect code on the first try.</p>
+      <a class="button" href="#debug">Try a debugging challenge ↗</a>
+    </div>
+  </header>
+
+  <div class="wrap manifesto">
+    <span>NO GATEKEEPING.</span><span>NO PERFECT-CODER MYTH.</span><span>JUST PROGRESS.</span><span>VOL. 001 / 2026</span>
+  </div>
+
+  <section class="wrap content" id="challenges">
+    <div class="sectionhead">
+      <div><div class="label">01 / START SOMEWHERE</div><h2>Small steps.<br>Real skills.</h2></div>
+      <p>Learning isn't a straight line. Pick a mini mission, try something, and get comfortable figuring things out.</p>
+    </div>
+    <div class="challenge-grid">
+      <article class="card bugcard">
+        <div class="card-top"><span class="label">MISSION 001</span><span class="pill">5 MIN</span></div>
+        <h3>Spot the bug</h3>
+        <p>One tiny Python mistake. Can you find the fix before peeking at the answer?</p>
+        <a class="textbutton" href="#debug">Take the challenge ↗</a>
+      </article>
+      <article class="card">
+        <div class="card-top"><span class="label">MISSION 002</span><span class="pill">10 MIN</span></div>
+        <h3>Make a thing</h3>
+        <p>Create a little program that asks your name and prints a friendly greeting.</p>
+        <button class="textbutton" id="hint">Reveal a starter hint ↗</button>
+        <p id="hintText" hidden>Try input("What's your name? ") and store the answer in a variable.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="wrap content" id="diary">
+    <div class="sectionhead">
+      <div><div class="label">02 / THE BUG DIARY</div><h2>Things that broke.<br>Things we learned.</h2></div>
+      <p>Real beginner stumbling blocks. Filter the entries and see that everyone starts somewhere.</p>
+    </div>
+    <div class="filters">
+      <button class="filter active" data-filter="all">All notes</button>
+      <button class="filter" data-filter="python">Python</button>
+      <button class="filter" data-filter="html">HTML</button>
+      <button class="filter" data-filter="habits">Learning habits</button>
+    </div>
+    <div class="diary">
+      <article class="entry" data-kind="python"><span class="entrynum">01</span><div><h3>IndentationError</h3><p>Python uses indentation to group code. Check that lines inside a loop or function are consistently indented.</p></div></article>
+      <article class="entry" data-kind="html"><span class="entrynum">02</span><div><h3>Forgotten closing tag</h3><p>Most HTML elements need a matching closing tag. Check the structure when your layout looks unexpected.</p></div></article>
+      <article class="entry" data-kind="python"><span class="entrynum">03</span><div><h3>NameError</h3><p>Check spelling and make sure a variable exists before you use it. Python treats Name and name differently.</p></div></article>
+      <article class="entry" data-kind="habits"><span class="entrynum">04</span><div><h3>Copying without testing</h3><p>Run a small piece at a time. Reading an error message is a skill, not a sign that you aren't good at coding.</p></div></article>
+    </div>
+  </section>
+
+  <section class="wrap content" id="debug">
+    <div class="sectionhead">
+      <div><div class="label">03 / INTERACTIVE LAB</div><h2>Okay, your turn.</h2></div>
+      <p>Choose the fix that solves this little Python problem. Guessing is part of learning.</p>
+    </div>
+    <div class="quiz">
+      <span class="label">PYTHON · BEGINNER · QUESTION 01</span>
+      <h3>Why does this code fail?</h3>
+      <div class="code"><span style="color:#d8f36a">for</span> number <span style="color:#d8f36a">in</span> range(3):<br>print(number)</div>
+      <p>The loop body isn't indented. What should you do?</p>
+      <div class="quiz-options">
+        <button class="answer" data-correct="false">A. Change range(3) to range(4)</button>
+        <button class="answer" data-correct="true">B. Indent print(number) inside the loop</button>
+        <button class="answer" data-correct="false">C. Put quotes around number</button>
+        <button class="answer" data-correct="false">D. Delete the colon</button>
+      </div>
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <button class="reset" id="reset" hidden>Try again ↺</button>
+    </div>
+  </section>
+
+  <section class="wins content" id="wins">
+    <div class="wrap">
+      <div class="sectionhead">
+        <div><div class="label">04 / PROGRESS COUNTS</div><h2>Give yourself<br>some credit.</h2></div>
+        <p>Not every win needs to be a big project. Sometimes it's just understanding one thing that confused you yesterday.</p>
+      </div>
+      <div class="wins-grid">
+        <article class="win"><div class="symbol">↗</div><h3>Asked for help</h3><p>Knowing when to ask is a real skill.</p></article>
+        <article class="win"><div class="symbol">⌘</div><h3>Fixed one bug</h3><p>You found the problem instead of giving up.</p></article>
+        <article class="win"><div class="symbol">✳</div><h3>Showed up again</h3><p>Consistency beats being perfect.</p></article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>ctrl + z. / THE LEARNING LAB</span>
+  <span>A student-made concept for learning in public.</span>
+  <a href="#home">BACK TO TOP ↑</a>
+</footer>
+
+<script>
+const menu = document.getElementById("menu");
+const navlinks = document.getElementById("navlinks");
+
+menu.addEventListener("click", () => {
+  const open = navlinks.classList.toggle("open");
+  menu.setAttribute("aria-expanded", String(open));
+  menu.textContent = open ? "✕" : "☰";
+});
+
+navlinks.querySelectorAll("a").forEach(link => {
+  link.addEventListener("click", () => {
+    navlinks.classList.remove("open");
+    menu.setAttribute("aria-expanded", "false");
+    menu.textContent = "☰";
+  });
+});
+
+document.querySelectorAll(".filter").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".filter").forEach(item => item.classList.remove("active"));
+    button.classList.add("active");
+    const filter = button.dataset.filter;
+    document.querySelectorAll(".entry").forEach(entry => {
+      entry.hidden = filter !== "all" && entry.dataset.kind !== filter;
+    });
+  });
+});
+
+document.querySelectorAll(".answer").forEach(button => {
+  button.addEventListener("click", () => {
+    const feedback = document.getElementById("feedback");
+    const correct = button.dataset.correct === "true";
+    feedback.textContent = correct
+      ? "✓ Exactly! Indentation tells Python which statements belong to the loop."
+      : "Not quite! Think about how Python knows which lines belong inside a loop.";
+    feedback.style.color = correct ? "#285e18" : "#8a321d";
+    document.querySelectorAll(".answer").forEach(item => item.disabled = true);
+    document.getElementById("reset").hidden = false;
+  });
+});
+
+document.getElementById("reset").addEventListener("click", () => {
+  document.querySelectorAll(".answer").forEach(item => item.disabled = false);
+  document.getElementById("feedback").textContent = "";
+  document.getElementById("reset").hidden = true;
+});
+
+document.getElementById("hint").addEventListener("click", () => {
+  const hint = document.getElementById("hintText");
+  hint.hidden = !hint.hidden;
+  document.getElementById("hint").textContent = hint.hidden
+    ? "Reveal a starter hint ↗" : "Hide starter hint ↗";
+});
+</script>
+</body>
+</html>
